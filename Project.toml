@@ -1,0 +1,13 @@
+name = "RBPmotifsCore"
+uuid = "a1da6ec0-0960-4c18-b043-648b41db7759"
+authors = ["Shane Kuei-Hsien Chu (skchu@wustl.edu)"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1.9"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]

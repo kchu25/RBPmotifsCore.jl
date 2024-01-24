@@ -89,7 +89,7 @@ function one_forward_step_XZ(S, Z, D, X, F, FX,
     return Z, X, FX
 end
 
-function loss(S, Z, X, D, F, hp)
+function loss(S, Z, X, D, F, hp, len)
     normalize_factor = (1.0f0/float_type(hp.batch_size));
     DZ                          = sum(convolution(Z, D, pad=hp.f_len-1, groups=hp.M), dims=2)
     reconstruction_loss         = normalize_factor*sum((DZ - S).^2)
@@ -136,7 +136,7 @@ function forward_pass_return_loss(S, cdl, hp, len, projs)
                  hp, len, projs
                  )
 
-    l = loss(S, Z, X, D, F, hp)
+    l = loss(S, Z, X, D, F, hp, len)
     println("loss $l")
     return l
 end
@@ -144,13 +144,13 @@ end
 function retrieve_code(S, cdl, hp, len, projs)
     lambda_sparsity_warmup, lambda_sparsity,
     lambda_stepsize_warmup, omega_stepsize_warmup, lambda_stepsize, omega_stepsize,
-    D, F_orig = prep_params(cdl, hp, projs)
+    D, F = prep_params(cdl, hp, projs)
 
-    Z, X = ADMM_XYZ(S, D, F_orig,  
+    Z, X = ADMM_XYZ(S, D, F,  
                  lambda_stepsize_warmup, lambda_stepsize, 
                  lambda_sparsity_warmup, lambda_sparsity,
                  omega_stepsize_warmup, omega_stepsize, 
                  hp, len, projs
                  )
-    return F_orig, Z, X
+    return F, Z, X
 end

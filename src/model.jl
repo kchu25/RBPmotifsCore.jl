@@ -23,7 +23,7 @@ Base.@kwdef mutable struct Hyperparam
     M::Int = 24                         # number of filters
     h::Int = 12                         # height of the syntax filter
     K::Int = 24                         # number of syntax filters
-    q::Int = 32                         # how sparse the syntax code should be for each sequence
+    q::Int = 48                         # how sparse the syntax code should be for each sequence
     batch_size::Int = 32                 # batch size
     num_pass_xyz::Int = 4               # number of passes for the x,y,z parameters
     # num_pass_df::Int = 3                # number of passes for the d,f parameters

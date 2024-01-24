@@ -1,4 +1,4 @@
-function train(data; num_epochs=nothing)
+function train(data; num_epochs=5)
     hp          = Hyperparam();
     len         = length_info(hp, data);
     projs       = projectors(hp, len);
@@ -11,11 +11,13 @@ function train(data; num_epochs=nothing)
     opt         = Flux.AdaBelief();
 
     for i in 1:num_epochs
+        @info "Epoch $i"
         for S in data_load
             S = S |> gpu;
             gs = gradient(ps) do
                 forward_pass_return_loss(S, cdl, hp, len, projs)
             end
+            Flux.Optimise.update!(opt, ps, gs) # update parameters
         end
     end
     return cdl, hp, len, projs

@@ -9,7 +9,8 @@ end
 
 function prep_syntax_filters(F)
     F = F.^2
-    return F ./ (sqrt.(sum(F.^2, dims=(1,2)))) # normalize F
+    F = F ./ (sqrt.(sum(F.^2, dims=(1,2)))) # normalize F
+    return F
 end
 
 function prep_params(ucdl, hp, projs)
@@ -89,6 +90,13 @@ function one_forward_step_XZ(S, Z, D, X, F, FX,
     return Z, X, FX
 end
 
+function entropy_loss(Z; pseudo=eltype(Z)(0.0001))
+    Z_add_pseudo = Z .+ pseudo
+    normalized_Z = Z_add_pseudo ./ sum(Z_add_pseudo, dims=(1,2))
+    return -sum(normalized_Z .* log.(normalized_Z))
+end
+
+
 function loss(S, Z, X, D, F, hp, len)
     normalize_factor = (1.0f0/float_type(hp.batch_size));
     DZ                          = sum(convolution(Z, D, pad=hp.f_len-1, groups=hp.M), dims=2)
@@ -97,7 +105,11 @@ function loss(S, Z, X, D, F, hp, len)
     Z_reshaped = hp.magnifying_factor .* reshape(Z[1:4:end,:,:], (len.c, hp.M, 1, hp.batch_size))
 
     syntax_reconstruction_loss  = normalize_factor*sum((FX - Z_reshaped).^2)
-    return reconstruction_loss + syntax_reconstruction_loss
+    entropy_loss_here = entropy_loss(Z) * normalize_factor
+    
+    println("recon_loss $reconstruction_loss syn-loss $syntax_reconstruction_loss, entropy_loss $entropy_loss_here")
+
+    return reconstruction_loss + syntax_reconstruction_loss + entropy_loss_here
 end
 
 
@@ -137,7 +149,7 @@ function forward_pass_return_loss(S, cdl, hp, len, projs)
                  )
 
     l = loss(S, Z, X, D, F, hp, len)
-    println("loss $l")
+    # println("loss $l")
     return l
 end
 

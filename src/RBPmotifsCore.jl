@@ -17,15 +17,19 @@ include("code_retrieval.jl")
 
 
 
-function discover_motifs(datapath::String; num_epochs=25)
-    data = FASTA_DNA{RBPmotifsCore.float_type}(datapath);
-    this_bg = get_data_bg(data)
-    cdl, hp, len, projs = train(data; num_epochs=num_epochs);
-    stored_code_components = RBPmotifsCore.code_retrieval(data, cdl, hp, len, projs);
-    return stored_code_components, data, hp, this_bg
-end
+# function discover_motifs(datapath::String; num_epochs=25)
+#     data = FASTA_DNA{RBPmotifsCore.float_type}(datapath);
+#     this_bg = get_data_bg(data)
+#     cdl, hp, len, projs = train(data; num_epochs=num_epochs);
+#     stored_code_components = RBPmotifsCore.code_retrieval(data, cdl, hp, len, projs);
+#     return stored_code_components, data, hp, this_bg
+# end
 
-
-
+# function discover_motifs(data::FASTA_DNA; num_epochs=25)
+#     this_bg = get_data_bg(data)
+#     cdl, hp, len, projs = train(data; num_epochs=num_epochs);
+#     stored_code_components = RBPmotifsCore.code_retrieval(data, cdl, hp, len, projs);
+#     return stored_code_components, data, hp, this_bg
+# end
 
 end
